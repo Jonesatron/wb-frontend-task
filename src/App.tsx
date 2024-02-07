@@ -1,18 +1,17 @@
-import { useMemo, useState } from "react";
-import LoadingState from "./components/LoadingState";
-import { useFetchProductData } from "./hooks/useFetchProductData";
-import { formatNumber } from "./utils/formatNumber";
-import { calculateRevenue } from "./utils/calculateRevenue";
+import { useMemo, useState } from 'react';
+import ErrorState from './components/ErrorState';
+import LoadingState from './components/LoadingState';
+import { useFetchProductData } from './hooks/useFetchProductData';
+import { calculateRevenue } from './utils/calculateRevenue';
+import { formatNumber } from './utils/formatNumber';
 
 const App: React.FC = () => {
-  const [products, isLoading] = useFetchProductData();
-  const [searchValue, setSearchValue] = useState("");
+  const [products, isLoading, hasErrored] = useFetchProductData();
+  const [searchValue, setSearchValue] = useState('');
 
   const [productsToDisplay, totalRevenue] = useMemo(() => {
     if (searchValue) {
-      const filteredProducts = products.filter(({ name }) =>
-        name.toLowerCase().includes(searchValue.toLowerCase())
-      );
+      const filteredProducts = products.filter(({ name }) => name.toLowerCase().includes(searchValue.toLowerCase()));
 
       return [filteredProducts, calculateRevenue(filteredProducts)];
     }
@@ -28,35 +27,34 @@ const App: React.FC = () => {
     <div className="product-list">
       <search className="search-container">
         <label htmlFor="search-input">Search Products</label>
-        <input
-          id="search-input"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          type="text"
-        />
+        <input id="search-input" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} type="text" />
       </search>
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Revenue</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productsToDisplay.map(({ id, name, revenue }) => (
-            <tr key={id}>
-              <td>{name}</td>
-              <td>{formatNumber(revenue)}</td>
+      {!hasErrored && productsToDisplay.length ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Revenue</th>
             </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td>Total</td>
-            <td>{formatNumber(totalRevenue)}</td>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          <tbody>
+            {productsToDisplay.map(({ id, name, revenue }) => (
+              <tr key={id}>
+                <td>{name}</td>
+                <td>{formatNumber(revenue)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td>{formatNumber(totalRevenue)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      ) : null}
+
+      {hasErrored ? <ErrorState /> : null}
     </div>
   );
 };

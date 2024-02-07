@@ -1,6 +1,6 @@
 const LoadingState: React.FC = () => (
-  <div aria-live="polite" role="status">
-    <h1>Loading...</h1>
+  <div aria-live="polite" role="status" aria-labelledby="loading-message">
+    <h1 id="loading-message">Loading...</h1>
   </div>
 );
 

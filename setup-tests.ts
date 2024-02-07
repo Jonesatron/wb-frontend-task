@@ -1,7 +1,17 @@
-import { afterEach } from "vitest";
-import { cleanup } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
+import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterAll, afterEach, beforeAll } from 'vitest';
+import { server } from './src/mocks/node';
+
+beforeAll(() => {
+  server.listen();
+});
 
 afterEach(() => {
+  server.resetHandlers();
   cleanup();
+});
+
+afterAll(() => {
+  server.close();
 });

@@ -1,34 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { branchDataAggregator } from "../utils/branchDataAggregator";
-import { BranchApiResponse, ProductWithRevenue } from "../types";
+import { BranchApiResponse, ProductWithRevenue } from '../types';
+import { branchDataAggregator } from '../utils/branchDataAggregator';
 
-//Error handling
-
-export const useFetchProductData = (): [ProductWithRevenue[], boolean] => {
+export const useFetchProductData = (): [ProductWithRevenue[], isLoading: boolean, hasErrored: boolean] => {
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState<ProductWithRevenue[]>([]);
+  const [hasErrored, setHasErrored] = useState(false);
 
   useEffect(() => {
     const fetchProductData = async () => {
       setIsLoading(true);
-      const responses = await Promise.all([
-        fetch("/api/branch1.json"),
-        fetch("/api/branch2.json"),
-        fetch("/api/branch3.json"),
-      ]);
+      setHasErrored(false);
 
-      const branchData = await Promise.all(
-        responses.map<Promise<BranchApiResponse>>((res) => res.json())
-      );
+      try {
+        const responses = await Promise.all([
+          fetch('/api/branch1.json'),
+          fetch('/api/branch2.json'),
+          fetch('/api/branch3.json'),
+        ]);
 
-      setProducts(branchDataAggregator(branchData));
+        const branchData = await Promise.all(responses.map<Promise<BranchApiResponse>>((res) => res.json()));
 
-      setIsLoading(false);
+        setProducts(branchDataAggregator(branchData));
+        setIsLoading(false);
+      } catch (err) {
+        setHasErrored(true);
+        setIsLoading(false);
+      }
     };
 
     fetchProductData();
   }, []);
 
-  return [products, isLoading];
+  return [products, isLoading, hasErrored];
 };
