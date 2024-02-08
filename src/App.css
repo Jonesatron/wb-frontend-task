@@ -18,12 +18,13 @@ body {
 .search-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  margin-bottom: 5px;
 }
 
 .product-list {
   display: grid;
+  gap: 5px;
 }
 
 .product-list table {

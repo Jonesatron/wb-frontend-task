@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import ErrorState from './components/ErrorState';
 import LoadingState from './components/LoadingState';
+import NoProductsMessage from './components/NoProductsMessage';
 import { useFetchProductData } from './hooks/useFetchProductData';
 import { calculateRevenue } from './utils/calculateRevenue';
 import { formatNumber } from './utils/formatNumber';
@@ -29,6 +30,7 @@ const App: React.FC = () => {
         <label htmlFor="search-input">Search Products</label>
         <input id="search-input" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} type="text" />
       </search>
+
       {!hasErrored && productsToDisplay.length ? (
         <table>
           <thead>
@@ -52,7 +54,9 @@ const App: React.FC = () => {
             </tr>
           </tfoot>
         </table>
-      ) : null}
+      ) : (
+        <NoProductsMessage />
+      )}
 
       {hasErrored ? <ErrorState /> : null}
     </div>

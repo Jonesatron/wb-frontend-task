@@ -5,72 +5,72 @@ import { HttpResponse, http } from 'msw';
 import { server } from '../mocks/node';
 import { useFetchProductData } from './useFetchProductData';
 
+server.use(
+  http.get('/api/branch1.json', () => {
+    return HttpResponse.json({
+      branchId: '1',
+      products: [
+        {
+          id: '000',
+          name: 'pear',
+          sold: 50,
+          unitPrice: 7.5,
+        },
+        {
+          id: '001',
+          name: 'apple',
+          sold: 100,
+          unitPrice: 10,
+        },
+      ],
+    });
+  }),
+  http.get('/api/branch2.json', () => {
+    return HttpResponse.json({
+      branchId: '2',
+      products: [
+        {
+          id: '000',
+          name: 'pear',
+          sold: 50,
+          unitPrice: 7.5,
+        },
+        {
+          id: '002',
+          name: 'orange',
+          sold: 110,
+          unitPrice: 15,
+        },
+      ],
+    });
+  }),
+  http.get('/api/branch3.json', () => {
+    return HttpResponse.json({
+      branchId: '3',
+      products: [
+        {
+          id: '000',
+          name: 'pear',
+          sold: 50,
+          unitPrice: 7.5,
+        },
+        {
+          id: '003',
+          name: 'grapes',
+          sold: 120,
+          unitPrice: 20,
+        },
+      ],
+    });
+  }),
+);
+
 describe('when calling the useFetchProductData hook', () => {
   describe('and branch API responses are successful', () => {
     it('should return aggregated array of products with revenue', async () => {
-      server.use(
-        http.get('/api/branch1.json', () => {
-          return HttpResponse.json({
-            branchId: '1',
-            products: [
-              {
-                id: '000',
-                name: 'pear',
-                sold: 50,
-                unitPrice: 7.5,
-              },
-              {
-                id: '001',
-                name: 'apple',
-                sold: 100,
-                unitPrice: 10,
-              },
-            ],
-          });
-        }),
-        http.get('/api/branch2.json', () => {
-          return HttpResponse.json({
-            branchId: '2',
-            products: [
-              {
-                id: '000',
-                name: 'pear',
-                sold: 50,
-                unitPrice: 7.5,
-              },
-              {
-                id: '002',
-                name: 'orange',
-                sold: 110,
-                unitPrice: 15,
-              },
-            ],
-          });
-        }),
-        http.get('/api/branch3.json', () => {
-          return HttpResponse.json({
-            branchId: '3',
-            products: [
-              {
-                id: '000',
-                name: 'pear',
-                sold: 50,
-                unitPrice: 7.5,
-              },
-              {
-                id: '003',
-                name: 'grapes',
-                sold: 120,
-                unitPrice: 20,
-              },
-            ],
-          });
-        }),
-      );
-
       const { result } = renderHook(() => useFetchProductData());
 
-      // Delay until the render has occurred
+      // Flush Promises
       await act(async () => {
         await Promise.resolve();
       });
@@ -122,7 +122,7 @@ describe('when calling the useFetchProductData hook', () => {
 
       const { result } = renderHook(() => useFetchProductData());
 
-      // Delay until the render has occurred
+      // Flush Promises
       await act(async () => {
         await Promise.resolve();
       });
@@ -145,7 +145,7 @@ describe('when calling the useFetchProductData hook', () => {
 
       const { result } = renderHook(() => useFetchProductData());
 
-      // Delay until the render has occurred
+      // Flush Promises
       await act(async () => {
         await Promise.resolve();
       });

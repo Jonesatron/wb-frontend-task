@@ -51,17 +51,32 @@ describe('when rendering <App />', () => {
       expect(within(screen.getAllByRole('row').at(-1)!).getAllByRole('cell').at(-1)).toHaveTextContent('2,102,619.44');
     });
 
-    it('should filter the displayed products', async () => {
-      render(<App />);
-      expect(screen.getByRole('status', { name: 'Loading...' })).toBeInTheDocument();
+    describe('and a search term has been entered into the input', () => {
+      it('should filter the displayed products based on search term', async () => {
+        render(<App />);
+        expect(screen.getByRole('status', { name: 'Loading...' })).toBeInTheDocument();
 
-      await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
-      fireEvent.change(screen.getByLabelText('Search Products'), {
-        target: { value: 'pear' },
+        fireEvent.change(screen.getByLabelText('Search Products'), {
+          target: { value: 'pear' },
+        });
+
+        expect(within(screen.getAllByRole('row').at(-1)!).getAllByRole('cell').at(-1)).toHaveTextContent('60,681.02');
       });
 
-      expect(within(screen.getAllByRole('row').at(-1)!).getAllByRole('cell').at(-1)).toHaveTextContent('60,681.02');
+      it('should displayed no products message when there are no products which match filter', async () => {
+        render(<App />);
+        expect(screen.getByRole('status', { name: 'Loading...' })).toBeInTheDocument();
+
+        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+
+        fireEvent.change(screen.getByLabelText('Search Products'), {
+          target: { value: 'This is not a real product' },
+        });
+
+        await waitFor(() => expect(screen.getByRole('alert', { name: 'No Products Found' })).toBeInTheDocument());
+      });
     });
   });
 
