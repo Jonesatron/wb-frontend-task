@@ -17,5 +17,6 @@ export const branchDataAggregator = (data: BranchApiResponse[]): ProductWithReve
     return acc;
   }, {});
 
-  return Object.values(uniqueProducts).sort((a, b) => a.name.localeCompare(b.name));
+  // Sort unique products array alphabetically
+  return Object.values(uniqueProducts).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 };
